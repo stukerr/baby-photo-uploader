@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8182:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./uploads
+    environment:
+      - MAIL_TO=stukerr@hotmail.com
