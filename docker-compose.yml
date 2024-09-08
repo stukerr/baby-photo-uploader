@@ -6,7 +6,7 @@ services:
     ports:
       - "8182:80"
     volumes:
-      - ./src:/var/www/html
-      - ./uploads
+      - ./src:/var/www/html  
+      - ./uploads:/var/www/html/uploads
     environment:
       - MAIL_TO=stukerr@hotmail.com
