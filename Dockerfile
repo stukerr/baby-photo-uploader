@@ -14,6 +14,8 @@ RUN wget https://github.com/stukerr/baby-photo-uploader/archive/refs/heads/main.
     cp -r baby-photo-uploader-main/src/* /var/www/html/ && \
     cp /var/www/html/php.ini /usr/local/etc/php/php.ini && \ 
     rm -rf repo.zip baby-photo-uploader-main
+
+RUN /etc/init.d/apache2 reload
     
 # Create the uploads directory
 RUN mkdir -p /var/www/html/uploads
