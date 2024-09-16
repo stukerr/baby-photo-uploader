@@ -7,7 +7,14 @@ if (!isset($_SESSION['uploaded_files']) || !isset($_SESSION['baby_name'])) {
 
 $baby_name = $_SESSION['baby_name'];
 $uploaded_files = $_SESSION['uploaded_files'];
-$to = "example@example.com";
+
+to = getenv('EMAIL_ADDRESS');
+
+// Ensure the environment variable is set
+if (!to) {
+    die('Email address environment variable is not set.');
+}
+
 $subject = "Baby Photos: " . $baby_name;
 $headers = "From: no-reply@example.com";
 
