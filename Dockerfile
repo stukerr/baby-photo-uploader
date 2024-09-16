@@ -11,7 +11,7 @@ WORKDIR /var/www/html
 COPY src/ /var/www/html/
 
 # Set proper permissions
-RUN chown -R www-data:www-data /var/www/html/uploads
+#RUN chown -R www-data:www-data /var/www/html/uploads
 
 # Set permissions to allow writing
 RUN chmod -R 755 /var/www/html/uploads
