@@ -10,11 +10,12 @@ WORKDIR /var/www/html
 # Copy the application files into the container
 COPY src/ /var/www/html/
 
-# Set proper permissions
-#RUN chown -R www-data:www-data /var/www/html/uploads
+# Create the uploads directory
+RUN mkdir -p /var/www/html/uploads
 
-# Set permissions to allow writing
-RUN chmod -R 755 /var/www/html/uploads
+# Set permissions so that www-data can write to the directory
+RUN chown -R www-data:www-data /var/www/html/uploads \
+    && chmod -R 755 /var/www/html/uploads
 
 # Add sendmail package
 RUN apt-get update && apt-get install -y sendmail
