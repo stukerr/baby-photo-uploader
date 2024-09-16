@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y wget unzip sendmail
 
 RUN wget https://github.com/stukerr/baby-photo-uploader/archive/refs/heads/main.zip -O repo.zip && \
     unzip repo.zip && \
-    mv baby-photo-uploader-main/src /var/www/html && \
+    cp baby-photo-uploader-main/src/* /var/www/html/ && \
     rm -rf repo.zip baby-photo-uploader-main
 
 # Copy the application files into the container
