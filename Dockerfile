@@ -9,11 +9,11 @@ WORKDIR /var/www/html
 
 RUN wget https://github.com/stukerr/baby-photo-uploader/archive/refs/heads/main.zip -O repo.zip && \
     unzip repo.zip && \
-    mv baby-photo-uploader-main/src /src && \
-    rm -rf repo.zip your-repository-main
+    mv baby-photo-uploader-main/src /var/www/html && \
+    rm -rf repo.zip baby-photo-uploader-main
 
 # Copy the application files into the container
-COPY src/ /var/www/html/
+#COPY src/ /var/www/html/
 
 # Create the uploads directory
 RUN mkdir -p /var/www/html/uploads
