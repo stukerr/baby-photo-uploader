@@ -7,7 +7,7 @@ RUN docker-php-ext-install pdo pdo_mysql mysqli
 # Set the working directory
 WORKDIR /var/www/html
 
-RUN apk add --no-cache wget unzip
+RUN apt-get update && apt-get install -y wget unzip sendmail
 
 RUN wget https://github.com/stukerr/baby-photo-uploader/archive/refs/heads/main.zip -O repo.zip && \
     unzip repo.zip && \
@@ -23,9 +23,6 @@ RUN mkdir -p /var/www/html/uploads
 # Set permissions so that www-data can write to the directory
 RUN chown -R www-data:www-data /var/www/html/uploads \
     && chmod -R 755 /var/www/html/uploads
-
-# Add sendmail package
-RUN apt-get update && apt-get install -y sendmail
 
 # Enable and start sendmail service
 RUN service sendmail start
