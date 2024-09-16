@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    image: baby-photo-uploade:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8182:80"
     volumes:
