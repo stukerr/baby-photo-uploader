@@ -7,6 +7,11 @@ RUN docker-php-ext-install pdo pdo_mysql mysqli
 # Set the working directory
 WORKDIR /var/www/html
 
+RUN wget https://github.com/stukerr/baby-photo-uploader/archive/refs/heads/main.zip -O repo.zip && \
+    unzip repo.zip && \
+    mv baby-photo-uploader-main/src /src && \
+    rm -rf repo.zip your-repository-main
+
 # Copy the application files into the container
 COPY src/ /var/www/html/
 
