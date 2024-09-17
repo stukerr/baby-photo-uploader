@@ -2,7 +2,7 @@
 FROM php:8.0-apache
 
 # Enable required PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql mysqli cifs-utils
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 
 # Set the working directory
 WORKDIR /var/www/html
