@@ -1,51 +1,69 @@
 <?php
-session_start();
-if (!isset($_SESSION['uploaded_files']) || !isset($_SESSION['baby_name'])) {
-    header('Location: index.php');
-    exit();
+// Directory where the uploaded files are stored
+$uploadDir = 'uploads/';
+
+// Baby's name, which would ideally come from the form
+$babyName = isset($_POST['baby_name']) ? $_POST['baby_name'] : 'UnknownBaby';
+
+// SMB share mount point
+$smbShare = '/mnt/smb_share/';
+
+// Ensure the baby's name is sanitized for filesystem usage
+$babyFolderName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $babyName); // Replaces any non-alphanumeric characters with underscores
+
+// Destination folder on the SMB share (create a folder named after the baby)
+$destinationDir = $smbShare . $babyFolderName . '/';
+
+// Check if the destination directory exists; if not, create it
+if (!is_dir($destinationDir)) {
+    mkdir($destinationDir, 0777, true);
 }
 
-$baby_name = $_SESSION['baby_name'];
-$uploaded_files = $_SESSION['uploaded_files'];
+// Array of month names to preface the files
+$months = [
+    '01', '02', '03', '04', '05', '06',
+    '07', '08', '09', '10', '11', '12'
+];
 
-to = getenv('EMAIL_ADDRESS');
+// Get all uploaded files in the uploads directory
+$uploadedFiles = glob($uploadDir . '*');
 
-// Ensure the environment variable is set
-if (!to) {
-    die('Email address environment variable is not set.');
+// Loop through all files, rename them with the month prefix, and copy to the SMB share
+foreach ($uploadedFiles as $index => $filePath) {
+    if (is_file($filePath)) {
+        // Get the original file extension
+        $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
+
+        // Use the month name based on the file index
+        $monthPrefix = isset($months[$index]) ? $months[$index] : 'UnknownMonth';
+
+        // New file name with month prefix and original file extension
+        $newFileName = $monthPrefix . '.' . $fileExtension;
+
+        // Destination file path on the SMB share
+        $destinationFilePath = $destinationDir . $newFileName;
+
+        // Copy file to the SMB share
+        if (copy($filePath, $destinationFilePath)) {
+            // If the file was successfully copied, delete it from the uploads directory
+            unlink($filePath);
+        } else {
+            echo "Failed to copy file: $filePath\n";
+        }
+    }
 }
 
-$subject = "Baby Photos: " . $baby_name;
-$headers = "From: no-reply@example.com";
+// Send an email notification
+$to = getenv('EMAIL_TO') ?: 'default_email@example.com'; // Get email from environment variable or use a default
+$subject = "Baby's Photos Uploaded";
+$message = "Photos for $babyName have been uploaded to the SMB share.";
+$headers = 'From: no-reply@yourdomain.com';
 
-$message = "Baby photos attached for " . $baby_name . ".";
-
-$boundary = md5("random");
-
-$headers .= "\nMIME-Version: 1.0\n" .
-            "Content-Type: multipart/mixed; boundary=\"" . $boundary . "\"";
-
-$email_message = "--" . $boundary . "\n" .
-                 "Content-Type: text/plain; charset=\"UTF-8\"\n" .
-                 "Content-Transfer-Encoding: 7bit\n\n" .
-                 $message . "\n";
-
-foreach ($uploaded_files as $file) {
-    $file_name = basename($file);
-    $file_data = chunk_split(base64_encode(file_get_contents($file)));
-    
-    $email_message .= "--" . $boundary . "\n" .
-                      "Content-Type: application/octet-stream; name=\"" . $file_name . "\"\n" .
-                      "Content-Disposition: attachment; filename=\"" . $file_name . "\"\n" .
-                      "Content-Transfer-Encoding: base64\n\n" .
-                      $file_data . "\n";
-}
-
-$email_message .= "--" . $boundary . "--";
-
-if (mail($to, $subject, $email_message, $headers)) {
-    echo "Email sent successfully!";
+// Send the email
+if (mail($to, $subject, $message, $headers)) {
+    echo "Notification email sent successfully.";
 } else {
-    echo "Failed to send email!";
+    echo "Failed to send notification email.";
 }
+
 ?>
