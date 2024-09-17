@@ -10,6 +10,6 @@ services:
     volumes:
       - ./src:/var/www/html  
       - ./uploads:/var/www/html/uploads
-      - /mnt/smb:/mnt/smb
+      - /mnt/stuworking:/mnt/stuworking
     environment:
       - MAIL_TO=stukerr@hotmail.com
